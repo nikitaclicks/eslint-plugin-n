@@ -27,6 +27,9 @@ new RuleTester().run("callback-return", rule, {
         "function x() { for(x = 0; x < 10; x++) { return next(); } }",
         "function x() { while(x) { return next(); } }",
         "function a(err) { if (err) { obj.method (err); } }",
+        "function x(err) { if (err) { callback() } else { callback() } }",
+        "function x() { if (1 == 1) { callback(err); } else if (2 == 2) { callback(); } else { callback(); } }",
+        "function x() { if (1 == 1) { callback(err); } else { callback(); } }",
 
         // callback() all you want outside of a function
         "callback()",
@@ -312,10 +315,8 @@ new RuleTester().run("callback-return", rule, {
                 },
             ],
         },
-
-        // generally good behavior which we must not allow to keep the rule simple
         {
-            code: "function x(err) { if (err) { callback() } else { callback() } }",
+            code: "function x(err) { if (err) { callback(); } else { callback(); otherExpression(); } }",
             errors: [
                 {
                     messageId: "missingReturn",
@@ -326,11 +327,12 @@ new RuleTester().run("callback-return", rule, {
                 {
                     messageId: "missingReturn",
                     line: 1,
-                    column: 50,
+                    column: 51,
                     type: "CallExpression",
                 },
             ],
         },
+        // generally good behavior which we must not allow to keep the rule simple
         {
             code: "function x(err) { if (err) return callback(); else callback(); }",
             errors: [
