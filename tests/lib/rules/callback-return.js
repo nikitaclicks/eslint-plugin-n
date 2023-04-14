@@ -30,6 +30,7 @@ new RuleTester().run("callback-return", rule, {
         "function x(err) { if (err) { callback() } else { callback() } }",
         "function x() { if (1 == 1) { callback(err); } else if (2 == 2) { callback(); } else { callback(); } }",
         "function x() { if (1 == 1) { callback(err); } else { callback(); } }",
+        "function x() { if (1 == 1) { callback(err); } else { y(callback); } }",
 
         // callback() all you want outside of a function
         "callback()",
